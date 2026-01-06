@@ -13,6 +13,15 @@
                     <label for="code" class="form-label">Código</label>
                     <input type="text" class="form-control" id="code" name="code" value="<?= old('code', $product['code']) ?>" required>
                 </div>
+                <div class="col-md-4 mb-3">
+                    <label for="category_id" class="form-label">Categoría</label>
+                    <select class="form-select" id="category_id" name="category_id">
+                        <option value="">Seleccionar Categoría</option>
+                        <?php foreach ($categories as $cat): ?>
+                            <option value="<?= $cat['id'] ?>" <?= old('category_id', $product['category_id']) == $cat['id'] ? 'selected' : '' ?>><?= esc($cat['name']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
                 <div class="col-md-8 mb-3">
                     <label for="name" class="form-label">Nombre del Producto</label>
                     <input type="text" class="form-control" id="name" name="name" value="<?= old('name', $product['name']) ?>" required>

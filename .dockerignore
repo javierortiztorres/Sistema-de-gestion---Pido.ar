@@ -1,0 +1,17 @@
+.git
+.github
+.idea
+.vscode
+vendor
+node_modules
+builds
+writable/cache/*
+writable/logs/*
+writable/session/*
+writable/uploads/*
+.env
+.env.test
+.env.example
+docker-compose.yml
+Dockerfile
+README.md

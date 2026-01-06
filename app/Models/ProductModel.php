@@ -12,7 +12,17 @@ class ProductModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['code', 'name', 'description', 'cost_price', 'retail_price', 'wholesale_price', 'stock_quantity', 'min_stock'];
+    protected $allowedFields    = [
+        'category_id',
+        'code',
+        'name',
+        'description',
+        'stock_quantity',
+        'min_stock', // Added
+        'cost_price',
+        'retail_price',
+        'wholesale_price'
+    ];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
@@ -26,6 +36,7 @@ class ProductModel extends Model
 
     // Validation
     protected $validationRules      = [
+        'category_id'     => 'permit_empty|integer',
         'code'            => 'required|max_length[50]|is_unique[products.code,id,{id}]',
         'name'            => 'required|min_length[3]|max_length[255]',
         'cost_price'      => 'required|decimal',

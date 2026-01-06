@@ -6,6 +6,7 @@ use App\Models\SaleModel;
 use App\Models\SaleItemModel;
 use App\Models\ProductModel;
 use App\Models\ClientModel;
+use App\Models\CategoryModel;
 
 class SaleController extends BaseController
 {
@@ -13,6 +14,7 @@ class SaleController extends BaseController
     protected $saleItemModel;
     protected $productModel;
     protected $clientModel;
+    protected $categoryModel; // Added
     protected $db;
 
     public function __construct()
@@ -21,19 +23,32 @@ class SaleController extends BaseController
         $this->saleItemModel = new SaleItemModel();
         $this->productModel  = new ProductModel();
         $this->clientModel   = new ClientModel();
+        $this->categoryModel = new CategoryModel(); // Added
         $this->db            = \Config\Database::connect();
     }
 
     public function index()
     {
-        // For now, redirect to create (POS)
-        return redirect()->to('/sales/new');
+        // Fetch sales with client names
+        $data['sales'] = $this->saleModel
+            ->select('sales.*, clients.name as client_name')
+            ->join('clients', 'clients.id = sales.client_id', 'left')
+            ->orderBy('sales.created_at', 'DESC')
+            ->findAll();
+
+        return view('sales/index', $data);
     }
 
     public function new()
     {
         $data['clients']  = $this->clientModel->findAll();
-        $data['products'] = $this->productModel->findAll(); // In a real app, use AJAX for products
+        $data['products'] = $this->productModel
+            ->select('products.*, categories.name as category_name')
+            ->join('categories', 'categories.id = products.category_id', 'left')
+            ->orderBy('categories.name', 'ASC')
+            ->orderBy('products.name', 'ASC')
+            ->findAll();
+        $data['categories'] = $this->categoryModel->findAll(); // Added
         return view('sales/new', $data);
     }
 

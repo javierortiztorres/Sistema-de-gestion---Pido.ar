@@ -9,6 +9,13 @@
                 Productos
             </div>
             <div class="card-body">
+                <div class="mb-3">
+                    <div class="btn-group w-100" role="group" id="category-filters">
+                        <button type="button" class="btn btn-outline-primary active" data-cat="all">Todos</button>
+                        <!-- Categories loaded via JS or server-side if passed -->
+                    </div>
+                </div>
+
                 <div class="input-group mb-3">
                     <span class="input-group-text" id="search-icon">🔍</span>
                     <input type="text" class="form-control" id="product-search" placeholder="Buscar producto por nombre o código...">
@@ -18,6 +25,7 @@
                     <?php foreach ($products as $product): ?>
                         <a href="#" class="list-group-item list-group-item-action product-item" 
                            data-id="<?= $product['id'] ?>"
+                           data-cat-id="<?= $product['category_id'] ?>"
                            data-name="<?= esc($product['name']) ?>"
                            data-price="<?= $product['retail_price'] ?>"
                            data-stock="<?= $product['stock_quantity'] ?>">
@@ -104,11 +112,57 @@
     const totalAmount = document.getElementById('total-amount');
     const saleForm = document.getElementById('sale-form');
     const saleTypeSelect = document.getElementById('sale_type');
+    const categoryFilters = document.getElementById('category-filters');
 
-    // Filter Products
-    productSearch.addEventListener('input', function(e) {
-        const term = e.target.value.toLowerCase();
+    // Category Filtering
+    const categoriesData = <?= json_encode($categories) ?>;
+    
+    // Render Category Buttons
+    categoriesData.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'btn btn-outline-primary';
+        btn.dataset.cat = cat.id;
+        btn.textContent = cat.name;
+        categoryFilters.appendChild(btn);
+    });
+
+    categoryFilters.addEventListener('click', function(e) {
+        if (e.target.tagName === 'BUTTON') {
+            // Update active state
+            Array.from(categoryFilters.children).forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+
+            const catId = e.target.dataset.cat;
+            filterProducts(productSearch.value, catId);
+        }
+    });
+
+    // Unified Filter Function
+    function filterProducts(searchTerm, categoryId) {
+        const term = searchTerm.toLowerCase();
         const items = productList.getElementsByClassName('product-item');
+
+        Array.from(items).forEach(item => {
+            const name = item.dataset.name.toLowerCase();
+            const itemCatId = item.dataset.catId; // Note: Ensure dataset uses 'cat-id' -> dataset.catId
+            
+            const matchesSearch = name.includes(term);
+            const matchesCategory = categoryId === 'all' || itemCatId === categoryId;
+
+            if (matchesSearch && matchesCategory) {
+                item.style.display = '';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
+
+    productSearch.addEventListener('input', function(e) {
+        const activeCatBtn = categoryFilters.querySelector('.active');
+        const activeCat = activeCatBtn ? activeCatBtn.dataset.cat : 'all';
+        filterProducts(e.target.value, activeCat);
+    });
         Array.from(items).forEach(item => {
             const name = item.dataset.name.toLowerCase();
             const code = item.querySelector('p').textContent.toLowerCase();

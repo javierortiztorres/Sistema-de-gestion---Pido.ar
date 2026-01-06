@@ -28,7 +28,16 @@
                         <a class="nav-link" href="<?= site_url('clients') ?>">Clientes</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= site_url('products') ?>">Productos</a>
+                        <a class="nav-link" href="<?= site_url('categories') ?>">
+                            <i class="fas fa-tags"></i>
+                            Categorías
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?= site_url('products') ?>">
+                            <i class="fas fa-box"></i>
+                            Productos
+                        </a>
                     </li>
                 </ul>
             </div>
