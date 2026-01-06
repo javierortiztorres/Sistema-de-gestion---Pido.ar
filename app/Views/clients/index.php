@@ -24,20 +24,25 @@
         <?php if (!empty($clients) && is_array($clients)): ?>
             <?php foreach ($clients as $client): ?>
                 <tr>
-                    <td><?= esc($client['id']) ?></td>
+                    <td><?= $client['id'] ?></td>
                     <td><?= esc($client['name']) ?></td>
-                    <td><span class="badge bg-secondary"><?= esc($client['type']) ?></span></td>
+                    <td><?= $client['type'] == 'retail' ? 'Consumidor Final' : 'Mayorista' ?></td>
                     <td><?= esc($client['email']) ?></td>
-                    <td><?= esc($client['phone']) ?></td>
                     <td>
-                        <a href="<?= site_url('clients/edit/' . $client['id']) ?>" class="btn btn-sm btn-outline-secondary">Editar</a>
-                        <a href="<?= site_url('clients/delete/' . $client['id']) ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Seguro que deseas eliminar este cliente?')">Eliminar</a>
+                        <a href="<?= site_url('current-account/client/' . $client['id']) ?>" class="btn btn-sm btn-info" title="Cuenta Corriente">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                        </a>
+                        <a href="<?= site_url('clients/edit/' . $client['id']) ?>" class="btn btn-sm btn-warning">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="<?= site_url('clients/delete/' . $client['id']) ?>" class="btn btn-sm btn-danger" onclick="return confirm('¿Seguro que desea eliminar?')">
+                            <i class="fas fa-trash"></i>
+                        </a>
                     </td>
-                </tr>
-            <?php endforeach; ?>
+                </tr><?php endforeach; ?>
         <?php else: ?>
             <tr>
-                <td colspan="6" class="text-center">No hay clientes registrados.</td>
+                <td colspan="5" class="text-center">No hay clientes registrados.</td>
             </tr>
         <?php endif ?>
         </tbody>

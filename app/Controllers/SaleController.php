@@ -135,18 +135,67 @@ class SaleController extends BaseController
                 ]);
             }
 
-            $this->db->transComplete();
+            // Handle Current Account
+            if ($paymentMethod === 'current_account') {
+                if ($clientId) {
+                    // Determine movement type: Credit Sale = Debit (Increases Client Debt)
+                    // We decided: Client Balance = Debt.
+                    // Sale (Debt Increase) => Add to Balance.
+                    // Wait, Controller Logic: 
+                    // Client Payment (Credit) => Balance - Amount.
+                    // Sale (Debit) => Balance + Amount.
+                    
+                    $client = $this->clientModel->find($clientId);
+                    if ($client) {
+                        $newBalance = $client['account_balance'] + $total;
+                        $this->clientModel->update($clientId, ['account_balance' => $newBalance]);
 
-            if ($this->db->transStatus() === false) {
-                 $dbError = $this->db->error();
-                 return $this->response->setJSON(['status' => 'error', 'message' => 'Transaction failed: ' . json_encode($dbError)]);
+                        // Add Movement
+                        // We need AccountMovementModel here. Let's create an instance since we didn't inject it.
+                        $movementModel = new \App\Models\AccountMovementModel();
+                        $movementModel->insert([
+                            'entity_type' => 'client',
+                            'entity_id'   => $clientId,
+                            'type'        => 'debit', // Debit increases debt
+                            'amount'      => $total,
+                            'description' => 'Compra #' . $saleId,
+                            'reference_id'=> $saleId,
+                            'created_at'  => date('Y-m-d H:i:s')
+                        ]);
+                    }
+                }
             }
-
-            return $this->response->setJSON(['status' => 'success', 'sale_id' => $saleId]);
-
+            
+            if ($this->db->transStatus() === false) {
+                 $this->db->transRollback();
+                 return $this->response->setJSON(['status' => 'error', 'message' => 'Error en transacción']);
+            } else {
+                 $this->db->transCommit();
+                 return $this->response->setJSON(['status' => 'success', 'sale_id' => $saleId]);
+            }
         } catch (\Exception $e) {
             $this->db->transRollback();
             return $this->response->setJSON(['status' => 'error', 'message' => $e->getMessage()]);
         }
+    }
+
+    public function getDetails($id)
+    {
+        $sale = $this->saleModel->find($id);
+        if (!$sale) {
+             return $this->response->setJSON(['status' => 'error', 'message' => 'Venta no encontrada']);
+        }
+
+        $items = $this->saleItemModel
+            ->select('sale_items.*, products.name as product_name, products.code as product_code')
+            ->join('products', 'products.id = sale_items.product_id', 'left')
+            ->where('sale_id', $id)
+            ->findAll();
+
+        return $this->response->setJSON([
+            'status' => 'success',
+            'sale' => $sale,
+            'items' => $items
+        ]);
     }
 }

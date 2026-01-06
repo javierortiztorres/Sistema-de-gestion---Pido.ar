@@ -35,7 +35,19 @@
                         <a class="nav-link" href="<?= site_url('sales/new') ?>">POS (Venta)</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="<?= site_url('sales') ?>">
+                            <i class="fas fa-list-alt"></i>
+                            Historial Ventas
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="<?= site_url('clients') ?>">Clientes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?= site_url('suppliers') ?>">
+                            <i class="fas fa-truck"></i>
+                            Proveedores
+                        </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="<?= site_url('categories') ?>">

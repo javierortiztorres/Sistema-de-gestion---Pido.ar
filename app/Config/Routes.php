@@ -46,6 +46,7 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
     $routes->get('sales/new', 'SaleController::new');
     $routes->post('sales/store', 'SaleController::store');
     $routes->get('sales', 'SaleController::index');
+    $routes->get('sales/details/(:num)', 'SaleController::getDetails/$1');
 
     // Reports
     $routes->get('reports/invoice/(:num)', 'ReportController::invoice/$1');
@@ -67,4 +68,18 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
     // Profile
     $routes->get('auth/profile', 'AuthController::profile');
     $routes->post('auth/update-profile', 'AuthController::updateProfile');
+
+    // Suppliers
+    $routes->group('suppliers', function($routes) {
+        $routes->get('/', 'SupplierController::index');
+        $routes->get('create', 'SupplierController::create');
+        $routes->post('store', 'SupplierController::store');
+        $routes->get('edit/(:num)', 'SupplierController::edit/$1');
+        $routes->post('update/(:num)', 'SupplierController::update/$1');
+        $routes->get('delete/(:num)', 'SupplierController::delete/$1');
+    });
+
+    // Current Account
+    $routes->get('current-account/(:segment)/(:num)', 'CurrentAccountController::view/$1/$2'); // Type/ID
+    $routes->post('current-account/payment', 'CurrentAccountController::payment');
 });
