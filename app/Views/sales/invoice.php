@@ -50,6 +50,7 @@
                 <th>Producto</th>
                 <th class="text-right">Precio Unit.</th>
                 <th class="text-right">Cant.</th>
+                <th class="text-right">Desc.</th>
                 <th class="text-right">Subtotal</th>
             </tr>
         </thead>
@@ -60,7 +61,8 @@
                     <td><?= esc($item['product_name']) ?></td>
                     <td class="text-right">$<?= number_format($item['price'], 2) ?></td>
                     <td class="text-right"><?= $item['quantity'] ?></td>
-                    <td class="text-right">$<?= number_format($item['price'] * $item['quantity'], 2) ?></td>
+                    <td class="text-right">$<?= number_format($item['discount'], 2) ?></td>
+                    <td class="text-right">$<?= number_format(($item['price'] * $item['quantity']) - $item['discount'], 2) ?></td>
                 </tr>
             <?php endforeach; ?>
         </tbody>
@@ -69,9 +71,15 @@
     <div class="totals">
         <table style="width: 100%;">
             <tr>
-                <td class="text-right"><strong>Subtotal:</strong></td>
-                <td class="text-right">$<?= number_format($sale['total'], 2) ?></td>
+                <td class="text-right"><strong>Subtotal (Items):</strong></td>
+                <td class="text-right">$<?= number_format($sale['total'] + $sale['discount'], 2) ?></td>
             </tr>
+            <?php if ($sale['discount'] > 0): ?>
+            <tr>
+                <td class="text-right"><strong>Descuento Gral.:</strong></td>
+                <td class="text-right">-$<?= number_format($sale['discount'], 2) ?></td>
+            </tr>
+            <?php endif; ?>
             <!-- Tax calculation could go here -->
             <tr>
                 <td class="text-right grand-total">TOTAL:</td>

@@ -53,6 +53,43 @@ class ReportController extends BaseController
         $dompdf->render();
 
         // Stream PDF
-        $dompdf->stream("invoice_{$saleId}.pdf", ["Attachment" => false]);
+        $dompdf->stream('factura_' . $saleId . '.pdf', ['Attachment' => 0]);
+    }
+
+    public function dailyCash()
+    {
+        $saleModel = new \App\Models\SaleModel();
+        $today = date('Y-m-d');
+
+        // Total Sales Today
+        $totalSales = $saleModel->where('DATE(created_at)', $today)->selectSum('total')->first()['total'] ?? 0;
+        
+        // Sales Count
+        $salesCount = $saleModel->where('DATE(created_at)', $today)->countAllResults();
+
+        // By Payment Method
+        $byMethodRaw = $saleModel
+            ->select('payment_method, SUM(total) as method_total, COUNT(id) as method_count')
+            ->where('DATE(created_at)', $today)
+            ->groupBy('payment_method')
+            ->findAll();
+
+        // Detailed List
+        $sales = $saleModel
+            ->select('sales.*, clients.name as client_name')
+            ->join('clients', 'clients.id = sales.client_id', 'left')
+            ->where('DATE(sales.created_at)', $today)
+            ->orderBy('sales.created_at', 'DESC')
+            ->findAll();
+
+        $data = [
+            'today'       => $today,
+            'totalSales'  => $totalSales,
+            'salesCount'  => $salesCount,
+            'byMethod'    => $byMethodRaw,
+            'sales'       => $sales
+        ];
+
+        return view('reports/daily_cash', $data);
     }
 }

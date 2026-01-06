@@ -64,6 +64,8 @@ class SaleController extends BaseController
         $clientId = $json->client_id ?? null;
         $items    = $json->items ?? [];
         $type     = $json->type ?? 'retail';
+        $globalDiscount = $json->discount ?? 0; // Global Discount
+        $paymentMethod = $json->payment_method ?? 'cash'; // Payment Method
 
         if (empty($items)) {
              return $this->response->setJSON(['status' => 'error', 'message' => 'No items in cart']);
@@ -75,13 +77,19 @@ class SaleController extends BaseController
             // Calculate total
             $total = 0;
             foreach ($items as $item) {
-                $total += $item->price * $item->quantity;
+                $itemDiscount = $item->discount ?? 0;
+                $total += ($item->price * $item->quantity) - $itemDiscount;
             }
+            
+            // Apply Global Discount
+            $total -= $globalDiscount;
 
             // Create Sale
             $saleId = $this->saleModel->insert([
                 'client_id' => $clientId,
                 'total'     => $total,
+                'discount'  => $globalDiscount,
+                'payment_method' => $paymentMethod,
                 'type'      => $type,
             ]);
 
@@ -107,6 +115,7 @@ class SaleController extends BaseController
                     'product_id' => $item->product_id,
                     'quantity'   => $item->quantity,
                     'price'      => $item->price,
+                    'discount'   => $item->discount ?? 0,
                 ]);
             }
 

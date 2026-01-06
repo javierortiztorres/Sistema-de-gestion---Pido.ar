@@ -46,6 +46,8 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
 
     // Reports
     $routes->get('reports/invoice/(:num)', 'ReportController::invoice/$1');
+    $routes->get('reports/daily-cash', 'ReportController::dailyCash');
+
+    // Utilities
+    $routes->get('admin/backup', 'BackupController::index');
 });
-
-

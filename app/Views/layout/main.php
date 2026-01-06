@@ -39,6 +39,18 @@
                             Productos
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?= site_url('reports/daily-cash') ?>">
+                            <i class="fas fa-chart-line"></i>
+                            Cierre Caja
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?= site_url('admin/backup') ?>">
+                            <i class="fas fa-download"></i>
+                            Respaldo
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>

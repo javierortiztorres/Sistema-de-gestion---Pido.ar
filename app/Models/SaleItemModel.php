@@ -12,7 +12,7 @@ class SaleItemModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['sale_id', 'product_id', 'quantity', 'price'];
+    protected $allowedFields    = ['sale_id', 'product_id', 'quantity', 'price', 'discount'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
