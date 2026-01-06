@@ -93,6 +93,11 @@ class SaleController extends BaseController
                 'type'      => $type,
             ]);
 
+            if (!$saleId) {
+                 $errors = $this->saleModel->errors();
+                 throw new \Exception("Error creating sale: " . implode(", ", $errors));
+            }
+
             foreach ($items as $item) {
                 // Verify Stock
                 $product = $this->productModel->find($item->product_id);
@@ -122,7 +127,8 @@ class SaleController extends BaseController
             $this->db->transComplete();
 
             if ($this->db->transStatus() === false) {
-                 return $this->response->setJSON(['status' => 'error', 'message' => 'Transaction failed']);
+                 $dbError = $this->db->error();
+                 return $this->response->setJSON(['status' => 'error', 'message' => 'Transaction failed: ' . json_encode($dbError)]);
             }
 
             return $this->response->setJSON(['status' => 'success', 'sale_id' => $saleId]);
