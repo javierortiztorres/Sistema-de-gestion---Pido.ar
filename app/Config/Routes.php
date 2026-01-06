@@ -38,6 +38,9 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
     $routes->post('products/update/(:num)', 'ProductController::update/$1');
     $routes->post('products/adjust-stock/(:num)', 'ProductController::adjustStock/$1');
     $routes->get('products/delete/(:num)', 'ProductController::delete/$1');
+    
+    // Stock Logs
+    $routes->get('stock-logs', 'StockLogController::index');
 
     // Sales
     $routes->get('sales/new', 'SaleController::new');
@@ -50,4 +53,18 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
 
     // Utilities
     $routes->get('admin/backup', 'BackupController::index');
+
+    // Users
+    $routes->group('users', function($routes) {
+        $routes->get('/', 'UserController::index');
+        $routes->get('create', 'UserController::create');
+        $routes->post('store', 'UserController::store');
+        $routes->get('edit/(:num)', 'UserController::edit/$1');
+        $routes->post('update/(:num)', 'UserController::update/$1');
+        $routes->get('delete/(:num)', 'UserController::delete/$1');
+    });
+
+    // Profile
+    $routes->get('auth/profile', 'AuthController::profile');
+    $routes->post('auth/update-profile', 'AuthController::updateProfile');
 });

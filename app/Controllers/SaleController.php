@@ -7,6 +7,7 @@ use App\Models\SaleItemModel;
 use App\Models\ProductModel;
 use App\Models\ClientModel;
 use App\Models\CategoryModel;
+use App\Models\StockLogModel;
 
 class SaleController extends BaseController
 {
@@ -14,7 +15,8 @@ class SaleController extends BaseController
     protected $saleItemModel;
     protected $productModel;
     protected $clientModel;
-    protected $categoryModel; // Added
+    protected $categoryModel;
+    protected $stockLogModel;
     protected $db;
 
     public function __construct()
@@ -23,7 +25,8 @@ class SaleController extends BaseController
         $this->saleItemModel = new SaleItemModel();
         $this->productModel  = new ProductModel();
         $this->clientModel   = new ClientModel();
-        $this->categoryModel = new CategoryModel(); // Added
+        $this->categoryModel = new CategoryModel();
+        $this->stockLogModel = new StockLogModel();
         $this->db            = \Config\Database::connect();
     }
 
@@ -121,6 +124,14 @@ class SaleController extends BaseController
                     'quantity'   => $item->quantity,
                     'price'      => $item->price,
                     'discount'   => $item->discount ?? 0,
+                ]);
+
+                // Log Stock Change
+                $this->stockLogModel->insert([
+                    'product_id'    => $item->product_id,
+                    'user_id'       => session()->get('id') ?? 1, // Fallback to 1 (Admin/System) if session missing
+                    'change_amount' => -$item->quantity,
+                    'reason'        => 'Venta #' . $saleId
                 ]);
             }
 
