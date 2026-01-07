@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual de Usuario - Sistema de Gestión</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', user-scalable, system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        h1 { color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 1rem; }
+        h2 { color: #2980b9; margin-top: 2rem; border-bottom: 1px solid #eee; padding-bottom: 0.5rem; }
+        h3 { color: #16a085; margin-top: 1.5rem; }
+        ul { margin-bottom: 1rem; }
+        li { margin-bottom: 0.5rem; }
+        code { background: #f8f9fa; padding: 0.2rem 0.4rem; border-radius: 4px; font-family: monospace; }
+        @media print {
+            body { max-width: 100%; padding: 0; }
+            a { text-decoration: none; color: #000; }
+            h1, h2 { page-break-after: avoid; }
+            ul, p { page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Manual de Usuario - Sistema de Gestión</h1>
+    <p>Bienvenido al Manual de Usuario del Sistema de Gestión. Este documento le guiará a través de las funcionalidades del sistema para administrar su negocio de manera eficiente.</p>
+
+    <h2>Tabla de Contenidos</h2>
+    <ul>
+        <li>1. Acceso al Sistema</li>
+        <li>2. Tablero Principal (Dashboard)</li>
+        <li>3. Gestión de Inventario</li>
+        <li>4. Ventas (Punto de Venta)</li>
+        <li>5. Gestión de Personas</li>
+        <li>6. Cuentas Corrientes</li>
+        <li>7. Reportes</li>
+        <li>8. Administración del Sistema</li>
+    </ul>
+
+    <hr>
+
+    <h2>1. Acceso al Sistema</h2>
+    <p>Para ingresar al sistema, diríjase a la página de inicio de sesión.</p>
+    <ul>
+        <li>Ingrese su <strong>Correo Electrónico</strong> y <strong>Contraseña</strong>.</li>
+        <li>Presione el botón <strong>Ingresar</strong>.</li>
+        <li>Si desea salir, haga clic en el botón <strong>Cerrar Sesión</strong> ubicado en el menú superior.</li>
+    </ul>
+
+    <h2>2. Tablero Principal (Dashboard)</h2>
+    <p>Al iniciar sesión, verá el Tablero Principal. Aquí encontrará un resumen rápido del estado de su negocio, incluyendo alertas de stock bajo y accesos directos a las funciones más utilizadas.</p>
+
+    <h2>3. Gestión de Inventario</h2>
+    
+    <h3>Productos</h3>
+    <p>Diríjase al menú <strong>Productos</strong> para ver el listado de todos los artículos.</p>
+    <ul>
+        <li><strong>Crear Producto</strong>: Haga clic en "Nuevo Producto", complete los datos (Nombre, Código, Precio, Stock, Categoría) y guarde.</li>
+        <li><strong>Editar</strong>: Haga clic en el ícono de lápiz de un producto para modificar sus datos.</li>
+        <li><strong>Eliminar</strong>: Use el ícono de papelera para quitar un producto (si el sistema lo permite dependiendo de las ventas asociadas).</li>
+        <li><strong>Importar/Exportar</strong>: Utilice las opciones para cargar productos masivamente desde CSV o descargar su listado.</li>
+    </ul>
+
+    <h3>Categorías</h3>
+    <p>Organice sus productos en familias.</p>
+    <ul>
+        <li>Vaya a <strong>Categorías</strong> para agregar nuevas clasificaciones (ej: "Bebidas", "Limpieza").</li>
+        <li>Esto facilita la búsqueda en el punto de venta.</li>
+    </ul>
+
+    <h3>Control de Stock</h3>
+    <p>El sistema descuenta automáticamente el stock al realizar una venta.</p>
+    <ul>
+        <li><strong>Ajuste Manual</strong>: Puede realizar ajustes de stock (entradas o salidas manuales por averías o compras) desde la sección correspondiente.</li>
+        <li><strong>Historial</strong>: Consulte <code>Stock Logs</code> para ver los movimientos históricos de cada artículo.</li>
+    </ul>
+
+    <h2>4. Ventas (Punto de Venta)</h2>
+    <p>El módulo de <strong>Ventas</strong> es el corazón de la facturación.</p>
+    <ol>
+        <li>Haga clic en <strong>Nueva Venta</strong>.</li>
+        <li><strong>Buscar Producto</strong>: Escanee el código de barras o escriba el nombre del producto.</li>
+        <li><strong>Agregar al Carrito</strong>: El producto se sumará a la lista.</li>
+        <li><strong>Cliente</strong>: Seleccione un cliente registrado o "Consumidor Final" por defecto.</li>
+        <li><strong>Completar Venta</strong>:
+            <ul>
+                <li>Verifique el total.</li>
+                <li>Seleccione el método de pago.</li>
+                <li>Confirme la operación para generar el ticket y descontar stock.</li>
+            </ul>
+        </li>
+    </ol>
+
+    <h2>5. Gestión de Personas</h2>
+
+    <h3>Clientes</h3>
+    <p>Administre su base de datos de clientes.</p>
+    <ul>
+        <li>Ideal para mantener cuentas corrientes o historial de compras.</li>
+        <li>Puede importar/exportar la lista de clientes.</li>
+    </ul>
+
+    <h3>Proveedores</h3>
+    <p>Registre a sus proveedores para gestionar compras y cuentas corrientes de pago.</p>
+
+    <h2>6. Cuentas Corrientes</h2>
+    <p>Este módulo permite ver las deudas de clientes o saldos a favor con proveedores.</p>
+    <ul>
+        <li>Seleccione un Cliente o Proveedor.</li>
+        <li>Verá el detalle de movimientos (Ventas, Pagos).</li>
+        <li><strong>Registrar Pago</strong>: Ingrese pagos parciales o totales para saldar la cuenta.</li>
+    </ul>
+
+    <h2>7. Reportes</h2>
+    <p>Obtenga información valiosa para la toma de decisiones.</p>
+    <ul>
+        <li><strong>Caja Diaria</strong>: Resumen de ingresos del día.</li>
+        <li><strong>Facturas</strong>: Listado detallado de todas las ventas realizadas.</li>
+        <li><strong>Exportación</strong>: La mayoría de los reportes se pueden descargar en CSV/Excel.</li>
+    </ul>
+
+    <h2>8. Administración del Sistema</h2>
+
+    <h3>Usuarios y Roles</h3>
+    <ul>
+        <li><strong>Usuarios</strong>: Cree cuentas para sus empleados.</li>
+        <li><strong>Roles</strong>: Asigne permisos (Administrador, Vendedor) para restringir el acceso a ciertas áreas sensibles (como la eliminación de productos o configuraciones).</li>
+    </ul>
+
+    <h3>Copias de Seguridad (Backup)</h3>
+    <p>Proteja sus datos.</p>
+    <ul>
+        <li>Vaya a <strong>Admin > Backup</strong> para generar y descargar una copia segura de toda la base de datos. Se recomienda hacer esto periódicamente.</li>
+    </ul>
+
+</body>
+</html>

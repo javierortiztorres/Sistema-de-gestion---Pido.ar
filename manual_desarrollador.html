@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual del Desarrollador - Sistema de Gestión</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', user-scalable, system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 1rem;
+        }
+
+        h2 {
+            color: #d35400;
+            margin-top: 2rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            color: #8e44ad;
+            margin-top: 1.5rem;
+        }
+
+        ul {
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        code {
+            background: #f8f9fa;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #e74c3c;
+        }
+
+        pre {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            border: 1px solid #eee;
+        }
+
+        @media print {
+            body {
+                max-width: 100%;
+                padding: 0;
+            }
+
+            a {
+                text-decoration: none;
+                color: #000;
+            }
+
+            h1,
+            h2 {
+                page-break-after: avoid;
+            }
+
+            ul,
+            pre,
+            p {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Manual del Desarrollador - Sistema de Gestión</h1>
+
+    <h2>Introducción Técnica</h2>
+    <p>Este sistema está construido sobre el framework <strong>CodeIgniter 4</strong>, utilizando una arquitectura MVC
+        (Modelo-Vista-Controlador). Está diseñado para ser ligero, rápido y fácil de extender.</p>
+
+    <h3>Stack Tecnológico</h3>
+    <ul>
+        <li><strong>Lenguaje</strong>: PHP 8.1+</li>
+        <li><strong>Framework</strong>: CodeIgniter 4</li>
+        <li><strong>Base de Datos</strong>: MySQL / MariaDB</li>
+        <li><strong>Frontend</strong>: Bootstrap 5 (HTML5, CSS3, JS)</li>
+        <li><strong>Gestor de Paquetes</strong>: Composer</li>
+    </ul>
+
+    <hr>
+
+    <h2>Requisitos del Sistema</h2>
+    <p>Para ejecutar este proyecto en un entorno de desarrollo o producción, asegúrese de contar con:</p>
+    <ul>
+        <li>PHP >= 8.1</li>
+        <li>Extensiones PHP requeridas: <code>intl</code>, <code>mbstring</code>, <code>json</code>, <code>mysql</code>,
+            <code>xml</code>, <code>curl</code>.</li>
+        <li>Servidor Web (Apache/Nginx) o servidor interno de CodeIgniter (<code>spark</code>).</li>
+        <li>MySQL 5.7+ o MariaDB 10.3+</li>
+    </ul>
+
+    <hr>
+
+    <h2>Instalación y Configuración</h2>
+
+    <h3>1. Clonar o Descomprimir</h3>
+    <p>Extraiga los archivos del proyecto en su servidor web.</p>
+
+    <h3>2. Instalar Dependencias</h3>
+    <p>Ejecute el siguiente comando en la raíz del proyecto para descargar las librerías necesarias:</p>
+    <pre><code>composer install</code></pre>
+
+    <h3>3. Configuración de Entorno (.env)</h3>
+    <p>Copie el archivo <code>env</code> a <code>.env</code> y configure sus credenciales de base de datos y la URL
+        base:</p>
+    <pre><code>CI_ENVIRONMENT = development # o production
+
+app.baseURL = 'http://localhost/sistema/'
+
+database.default.hostname = localhost
+database.default.database = nombre_db
+database.default.username = usuario
+database.default.password = contraseña
+database.default.DBDriver = MySQLi</code></pre>
+
+    <h3>4. Base de Datos</h3>
+    <p>Corra las migraciones y seeders para estructurar la base de datos e insertar datos iniciales (admin, roles,
+        configuración básica):</p>
+    <pre><code>php spark migrate
+php spark db:seed MainSeeder</code></pre>
+    <p><em>(Nota: Verifique si existe un <code>MainSeeder</code> o ejecute seeds específicos como
+            <code>ConsumidorFinalSeeder</code>).</em></p>
+
+    <hr>
+
+    <h2>Estructura del Proyecto</h2>
+    <p>El proyecto sigue la estructura estándar de CodeIgniter 4:</p>
+    <ul>
+        <li><strong>app/</strong>: Núcleo de la aplicación.
+            <ul>
+                <li><strong>Config/</strong>: Archivos de configuración (<code>Routes.php</code>,
+                    <code>Database.php</code>).</li>
+                <li><strong>Controllers/</strong>: Lógica de negocio (<code>SaleController</code>,
+                    <code>ProductController</code>).</li>
+                <li><strong>Models/</strong>: Interacción con la base de datos (<code>ProductModel</code>,
+                    <code>SaleModel</code>).</li>
+                <li><strong>Views/</strong>: Plantillas HTML (<code>products/</code>, <code>sales/</code>).</li>
+            </ul>
+        </li>
+        <li><strong>public/</strong>: Raíz pública (CSS, JS, imágenes). Apunte su servidor web aquí.</li>
+        <li><strong>writable/</strong>: Directorio de escritura para logs, cache y sesiones. Debe tener permisos de
+            escritura.</li>
+    </ul>
+
+    <hr>
+
+    <h2>Módulos Principales</h2>
+
+    <h3>Auth</h3>
+    <p>Maneja el inicio de sesión y protección de rutas. Utiliza un <code>AuthFilter</code> configurado en
+        <code>app/Config/Filters.php</code> y asignado en <code>Routes.php</code>.</p>
+
+    <h3>Ventas y Stock</h3>
+    <p>La lógica de ventas descuenta stock automáticamente.</p>
+    <ul>
+        <li><strong>Controlador</strong>: <code>SaleController</code></li>
+        <li><strong>Modelos</strong>: <code>SaleModel</code>, <code>SaleDetailModel</code>, <code>ProductModel</code>.
+        </li>
+        <li><strong>Flujo</strong>: Al crear una venta (<code>store</code>), se recorren los items, se crea el registro
+            en <code>sales</code>, los detalles en <code>sale_details</code> y se actualiza <code>products.stock</code>.
+        </li>
+    </ul>
+
+    <h3>Reportes</h3>
+    <p>Genera vistas basadas en consultas agregadas.</p>
+    <ul>
+        <li><strong>Controlador</strong>: <code>ReportController</code></li>
+        <li><strong>Vistas</strong>: <code>reports/daily_cash</code>, <code>reports/invoice</code>.</li>
+    </ul>
+
+    <hr>
+
+    <h2>Añadir Nuevas Funcionalidades</h2>
+    <ol>
+        <li><strong>Crear Ruta</strong>: Defina el endpoint en <code>app/Config/Routes.php</code>.</li>
+        <li><strong>Crear Controlador</strong>: Use <code>php spark make:controller NombreController</code>.</li>
+        <li><strong>Crear Modelo</strong>: Si requiere nueva tabla, <code>php spark make:model NombreModel</code>.</li>
+        <li><strong>Crear Vista</strong>: En <code>app/Views</code>.</li>
+    </ol>
+
+    <hr>
+
+    <h2>Comandos Útiles</h2>
+    <ul>
+        <li>Iniciar servidor de desarrollo:
+            <pre><code>php spark serve</code></pre>
+        </li>
+        <li>Ver rutas registradas:
+            <pre><code>php spark routes</code></pre>
+        </li>
+        <li>Crear nueva migración:
+            <pre><code>php spark migrate:create nombre_tabla</code></pre>
+        </li>
+    </ul>
+
+</body>
+
+</html>
