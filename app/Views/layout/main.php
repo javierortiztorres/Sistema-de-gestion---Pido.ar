@@ -22,7 +22,7 @@
 <body>
     <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Sistema Gestión</a>
+            <spam class="navbar-brand" href="#"><center>Pido.ar <br /> Sistema Gestión</center></spam>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -141,6 +141,18 @@
 
         <?= $this->renderSection('content') ?>
     </main>
+    
+    <footer class="footer mt-auto py-3 bg-light text-center">
+        <div class="container">
+            <span class="text-muted">
+                &copy; <?= date('Y') ?> Pido.ar - Sistema de Gestión. <br>
+                <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" target="_blank">
+                    <img alt="Licencia Creative Commons" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+                </a><br />
+                Esta obra está bajo una <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" target="_blank">Licencia Creative Commons Atribución-NoComercial-CompartirIgual 4.0 Internacional</a>.
+            </span>
+        </div>
+    </footer>
 
     <script src="<?= base_url('assets/js/bootstrap.bundle.min.js') ?>"></script>
     <?= $this->renderSection('scripts') ?>
