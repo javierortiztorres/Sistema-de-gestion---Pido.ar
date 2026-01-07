@@ -7,7 +7,14 @@
     <link href="<?= base_url('assets/css/bootstrap.min.css') ?>" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+    <style>
         body { padding-top: 56px; }
+        .navbar-nav .nav-link.active {
+            font-weight: bold;
+            color: #fff !important;
+            background-color: rgba(255,255,255,0.2);
+            border-radius: 5px;
+        }
     </style>
     <script>
         // Force cleanup of stuck backdrops on load
@@ -20,6 +27,7 @@
     </script>
 </head>
 <body>
+    <?php $uri = current_url(true); ?>
     <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
             <spam class="navbar-brand" href="#"><center>Pido.ar <br /> Sistema Gestión</center></spam>
@@ -29,72 +37,73 @@
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <ul class="navbar-nav me-auto mb-2 mb-md-0">
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= site_url('/') ?>">
+                        <a class="nav-link <?= uri_string() == '' || uri_string() == '/' ? 'active' : '' ?>" href="<?= site_url('/') ?>">
                             <i class="fas fa-home"></i>
                             Home
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= site_url('sales/new') ?>">
+                        <a class="nav-link <?= strpos(uri_string(), 'sales/new') === 0 ? 'active' : '' ?>" href="<?= site_url('sales/new') ?>">
                             <i class="fas fa-cash-register"></i>
                             POS (Venta)
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= site_url('sales') ?>">
+                        <a class="nav-link <?= uri_string() == 'sales' || (strpos(uri_string(), 'sales') === 0 && strpos(uri_string(), 'sales/new') === false) ? 'active' : '' ?>" href="<?= site_url('sales') ?>">
                             <i class="fas fa-list-alt"></i>
                             Historial Ventas
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= site_url('clients') ?>">
+                        <a class="nav-link <?= strpos(uri_string(), 'clients') === 0 ? 'active' : '' ?>" href="<?= site_url('clients') ?>">
                             <i class="fas fa-users"></i>
                             Clientes
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= site_url('suppliers') ?>">
+                        <a class="nav-link <?= strpos(uri_string(), 'suppliers') === 0 ? 'active' : '' ?>" href="<?= site_url('suppliers') ?>">
                             <i class="fas fa-truck"></i>
                             Proveedores
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= site_url('categories') ?>">
+                        <a class="nav-link <?= strpos(uri_string(), 'categories') === 0 ? 'active' : '' ?>" href="<?= site_url('categories') ?>">
                             <i class="fas fa-tags"></i>
                             Categorías
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= site_url('products') ?>">
+                        <a class="nav-link <?= strpos(uri_string(), 'products') === 0 ? 'active' : '' ?>" href="<?= site_url('products') ?>">
                             <i class="fas fa-box"></i>
                             Productos
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= site_url('stock-logs') ?>">
+                        <a class="nav-link <?= strpos(uri_string(), 'stock-logs') === 0 ? 'active' : '' ?>" href="<?= site_url('stock-logs') ?>">
                             <i class="fas fa-history"></i>
                             Movimientos Stock
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= site_url('reports/daily-cash') ?>">
+                        <a class="nav-link <?= strpos(uri_string(), 'reports') === 0 ? 'active' : '' ?>" href="<?= site_url('reports/daily-cash') ?>">
                             <i class="fas fa-chart-line"></i>
                             Cierre Caja
                         </a>
                     </li>
-                        <a class="nav-link" href="<?= site_url('admin/backup') ?>">
+                    <li class="nav-item">
+                        <a class="nav-link <?= strpos(uri_string(), 'admin/backup') === 0 ? 'active' : '' ?>" href="<?= site_url('admin/backup') ?>">
                             <i class="fas fa-download"></i>
                             Respaldo
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= site_url('users') ?>">
+                        <a class="nav-link <?= strpos(uri_string(), 'users') === 0 ? 'active' : '' ?>" href="<?= site_url('users') ?>">
                             <i class="fas fa-users-cog"></i>
                             Usuarios
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= site_url('roles') ?>">
+                        <a class="nav-link <?= strpos(uri_string(), 'roles') === 0 ? 'active' : '' ?>" href="<?= site_url('roles') ?>">
                             <i class="fas fa-user-shield"></i>
                             Roles
                         </a>
