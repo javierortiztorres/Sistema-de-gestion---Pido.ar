@@ -155,6 +155,68 @@
             </div>
         </div>
     </div>
+
+    <!-- Out of Stock Card (Widget) -->
+    <div class="col-xl-3 col-md-6 mb-4 widget-card" id="widget-out-of-stock" data-name="Sin Stock (Agotados)">
+        <div class="card bg-danger text-white shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-white text-uppercase mb-1">
+                            Agotados (Sin Stock)</div>
+                        <div class="h5 mb-0 font-weight-bold"><?= $outOfStockCount ?></div>
+                        <p class="card-text text-white-50 small">Productos indisponibles</p>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-ban fa-2x text-white-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cash Sales Today Card (Widget) -->
+    <div class="col-xl-3 col-md-6 mb-4 widget-card" id="widget-cash-today" data-name="Caja Estimada (Hoy)">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Caja Estimada (Hoy)</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">$<?= number_format($cashSalesToday, 2) ?></div>
+                        <p class="card-text text-muted small">Ventas en Efectivo</p>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-money-bill-wave fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Max Debtor Card (Widget) -->
+    <div class="col-xl-3 col-md-6 mb-4 widget-card" id="widget-max-debtor" data-name="Mayor Deudor">
+        <div class="card border-left-danger shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                            Mayor Deudor</div>
+                        <?php if($maxDebtor): ?>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">$<?= number_format($maxDebtor['account_balance'], 2) ?></div>
+                            <p class="card-text text-muted small text-truncate"><?= esc($maxDebtor['name']) ?></p>
+                        <?php else: ?>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">-</div>
+                            <p class="card-text text-muted small">Sin deudores</p>
+                        <?php endif; ?>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-user-times fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="row mt-4">

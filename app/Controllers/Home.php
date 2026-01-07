@@ -33,14 +33,24 @@ class Home extends BaseController
 
         // Financials
         // Clients owe us (Receivables) - Sum of positive balances
-        $clients = $clientModel->findAll();
+        $clients = $clientModel->orderBy('account_balance', 'DESC')->findAll();
         $totalReceivables = 0;
-        foreach ($clients as $c) {
-            $totalReceivables += $c['account_balance'];
+        $maxDebtor = null;
+        if (!empty($clients)) {
+             foreach ($clients as $c) {
+                if ($c['account_balance'] > 0) {
+                    $totalReceivables += $c['account_balance'];
+                }
+             }
+             // Top debtor is the first one since we ordered by DESC
+             if ($clients[0]['account_balance'] > 0) {
+                 $maxDebtor = $clients[0];
+             }
         }
         $data['totalReceivables'] = $totalReceivables;
+        $data['maxDebtor'] = $maxDebtor;
 
-        // We owe suppliers (Payables) - Sum of positive balances (assuming positive = debt)
+        // We owe suppliers (Payables)
         $suppliers = $supplierModel->findAll();
         $totalPayables = 0;
         foreach ($suppliers as $s) {
@@ -48,6 +58,20 @@ class Home extends BaseController
         }
         $data['totalPayables'] = $totalPayables;
 
+        // Advanced Alerts
+        // 1. Out of Stock (0)
+        $data['outOfStockCount'] = $productModel->where('stock_quantity', 0)->countAllResults();
+
+        // 2. Cash Sales Today
+        // Note: Assuming 'payment_method' stores 'cash' or similar. We need to check SaleModel or DB. 
+        // Based on previous steps, payment_method is likely 'effectivo', 'tarjeta', 'transferencia', 'cta_cte'.
+        // Let's assume 'efectivo' for now based on standard Spanish naming.
+        $data['cashSalesToday'] = $saleModel
+            ->where('DATE(created_at)', $today)
+            ->where('payment_method', 'efectivo')
+            ->selectSum('total')
+            ->first()['total'] ?? 0;
+            
         return view('dashboard', $data);
     }
 }
