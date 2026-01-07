@@ -181,21 +181,59 @@ class SaleController extends BaseController
 
     public function getDetails($id)
     {
-        $sale = $this->saleModel->find($id);
+        $sale = $this->saleModel
+             ->select('sales.*, clients.name as client_name')
+             ->join('clients', 'clients.id = sales.client_id', 'left')
+             ->find($id);
+
         if (!$sale) {
-             return $this->response->setJSON(['status' => 'error', 'message' => 'Venta no encontrada']);
+            return $this->response->setJSON(['status' => 'error', 'message' => 'Venta no encontrada']);
         }
 
         $items = $this->saleItemModel
-            ->select('sale_items.*, products.name as product_name, products.code as product_code')
-            ->join('products', 'products.id = sale_items.product_id', 'left')
-            ->where('sale_id', $id)
-            ->findAll();
+             ->select('sale_items.*, products.name as product_name, products.code')
+             ->join('products', 'products.id = sale_items.product_id', 'left')
+             ->where('sale_id', $id)
+             ->findAll();
 
         return $this->response->setJSON([
             'status' => 'success',
             'sale' => $sale,
             'items' => $items
         ]);
+    }
+
+    public function exportCsv()
+    {
+        $filename = 'ventas_' . date('Ymd_His') . '.csv';
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+
+        $sales = $this->saleModel
+            ->select('sales.*, clients.name as client_name, users.name as user_name')
+            ->join('clients', 'clients.id = sales.client_id', 'left')
+            ->join('users', 'users.id = sales.user_id', 'left')
+            ->orderBy('created_at', 'DESC')
+            ->findAll();
+
+        $output = fopen('php://output', 'w');
+
+        // Header
+        fputcsv($output, ['ID', 'Fecha', 'Cliente', 'Usuario', 'Tipo', 'Metodo Pago', 'Descuento', 'Total']);
+
+        foreach ($sales as $sale) {
+            fputcsv($output, [
+                $sale['id'],
+                $sale['created_at'],
+                $sale['client_name'] ?? 'Consumidor Final',
+                $sale['user_name'],
+                $sale['type'],
+                $sale['payment_method'],
+                $sale['discount'],
+                $sale['total']
+            ]);
+        }
+        fclose($output);
+        exit;
     }
 }

@@ -116,37 +116,63 @@ class ProductController extends BaseController
 
     public function adjustStock($id)
     {
-        $rules = [
-            'change_amount' => 'required|integer|not_in_list[0]',
-            'reason'        => 'required|min_length[3]',
-        ];
+        $adjustment = $this->request->getPost('adjustment');
+        $reason     = $this->request->getPost('reason');
+        $product    = $this->productModel->find($id);
 
-        if (!$this->validate($rules)) {
-            return redirect()->back()->with('error', 'Invalid adjustment data');
-        }
-
-        $changeAmount = $this->request->getPost('change_amount');
-        $reason       = $this->request->getPost('reason');
-        $userId       = session()->get('id');
-
-        $product = $this->productModel->find($id);
         if (!$product) {
-            return redirect()->back()->with('error', 'Product not found');
+            return redirect()->back()->with('error', 'Producto no encontrado');
         }
 
-        // Update Product Stock
-        $newStock = $product['stock_quantity'] + $changeAmount;
+        $newStock = $product['stock_quantity'] + $adjustment;
+        if ($newStock < 0) {
+            return redirect()->back()->with('error', 'El stock no puede ser negativo');
+        }
+
+        // Update Product
         $this->productModel->update($id, ['stock_quantity' => $newStock]);
 
-        // Create Log
+        // Log
         $logModel = new \App\Models\StockLogModel();
         $logModel->insert([
-            'product_id'    => $id,
-            'user_id'       => $userId,
-            'change_amount' => $changeAmount,
-            'reason'        => $reason,
+            'product_id' => $id,
+            'change_amount' => $adjustment,
+            'reason' => $reason,
+            'user_id' => session()->get('user_id'), 
+            'created_at' => date('Y-m-d H:i:s')
         ]);
 
-        return redirect()->to('/products')->with('message', 'Stock adjusted successfully');
+        return redirect()->back()->with('message', 'Stock ajustado correctamente');
+    }
+
+    public function exportCsv()
+    {
+        $filename = 'productos_' . date('Ymd_His') . '.csv';
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+
+        $products = $this->productModel
+            ->select('products.*, categories.name as category_name')
+            ->join('categories', 'categories.id = products.category_id', 'left')
+            ->findAll();
+
+        $output = fopen('php://output', 'w');
+
+        // Header
+        fputcsv($output, ['ID', 'Codigo', 'Nombre', 'Categoria', 'Precio Minorista', 'Precio Mayorista', 'Stock']);
+
+        foreach ($products as $product) {
+            fputcsv($output, [
+                $product['id'],
+                $product['code'],
+                $product['name'],
+                $product['category_name'],
+                $product['retail_price'],
+                $product['wholesale_price'],
+                $product['stock_quantity']
+            ]);
+        }
+        fclose($output);
+        exit;
     }
 }

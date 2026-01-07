@@ -104,4 +104,29 @@ class UserController extends BaseController
         $this->userModel->delete($id);
         return redirect()->to('users')->with('message', 'Usuario eliminado.');
     }
+
+    public function exportCsv()
+    {
+        $filename = 'usuarios_' . date('Ymd_His') . '.csv';
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+
+        $users = $this->userModel->findAll();
+        $output = fopen('php://output', 'w');
+
+        // Header
+        fputcsv($output, ['ID', 'Nombre', 'Email', 'Rol', 'Fecha Creacion']);
+
+        foreach ($users as $user) {
+            fputcsv($output, [
+                $user['id'],
+                $user['name'],
+                $user['email'],
+                $user['role'],
+                $user['created_at']
+            ]);
+        }
+        fclose($output);
+        exit;
+    }
 }

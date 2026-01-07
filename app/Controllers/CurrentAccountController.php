@@ -56,6 +56,7 @@ class CurrentAccountController extends BaseController
         $id   = $this->request->getPost('entity_id');
         $amount = $this->request->getPost('amount');
         $description = $this->request->getPost('description');
+        $movTypeReq = $this->request->getPost('mov_type') ?? 'payment'; // Default to payment for backward compat
 
         if ($amount <= 0) {
             return redirect()->back()->with('error', 'El monto debe ser mayor a 0.');
@@ -69,22 +70,36 @@ class CurrentAccountController extends BaseController
             return redirect()->back()->with('error', 'Entidad no encontrada.');
         }
 
-        // Register Payment (Credit)
-        // For Client: Payment decreases debt (Balance decreases if debt is +) or increases credit.
-        // Let's assume Balance = Debt. So Payment reduces Balance.
-        // Wait, standard: Balance + = Receivable (Client owes us). Payment (Credit) reduces it.
-        // For Supplier: Balance + = Payable (We owe Supplier). Payment (Debit) reduces it.
-        
-        // Let's stick to simple accounting:
-        // Client: Debit = Sale (Increases Balance), Credit = Payment (Decreases Balance).
-        // Supplier: Credit = Purchase (Increases Balance), Debit = Payment (Decreases Balance).
-        
-        // BUT for implementation simplicity in DB, let's say 'balance' is always "Amount Owed TO US" (Client) or "Amount We Owe" (Supplier).
-        // Client Payment: Type 'credit'. Balance = Balance - Amount.
-        // Supplier Payment: Type 'debit'. Balance = Balance - Amount.
+        $newBalance = $entity['account_balance'];
+        $dbMovType = '';
 
-        $newBalance = $entity['account_balance'] - $amount;
-        $movType = ($type === 'client') ? 'credit' : 'debit'; 
+        // Logic for Client:
+        // Balance = DEBT.
+        // Payment: Reduces Balance (Type: credit)
+        // Debt/Charge: Increases Balance (Type: debit)
+        
+        // Logic for Supplier:
+        // Balance = DEBT (We owe them).
+        // Payment: Reduces Balance (Type: debit) - Wait, standard accounting: Supplier Credit increases Payables. Payment (Debit) reduces it.
+        // Debt/Charge (We buy on credit): Increases Balance (Type: credit).
+
+        if ($type === 'client') {
+            if ($movTypeReq === 'payment') {
+                $newBalance -= $amount;
+                $dbMovType = 'credit';
+            } else { // debt
+                $newBalance += $amount;
+                $dbMovType = 'debit';
+            }
+        } else { // supplier
+            if ($movTypeReq === 'payment') { // We pay them
+                $newBalance -= $amount;
+                $dbMovType = 'debit'; 
+            } else { // They charge us (e.g. initial balance)
+                $newBalance += $amount;
+                $dbMovType = 'credit';
+            }
+        }
 
         // Update Entity
         $model->update($id, ['account_balance' => $newBalance]);
@@ -93,12 +108,12 @@ class CurrentAccountController extends BaseController
         $this->movementModel->insert([
             'entity_type' => $type,
             'entity_id'   => $id,
-            'type'        => $movType,
+            'type'        => $dbMovType,
             'amount'      => $amount,
-            'description' => $description ?: 'Pago registrado',
+            'description' => $description ?: ($movTypeReq === 'payment' ? 'Pago registrado' : 'Cargo / Ajuste'),
             'created_at'  => date('Y-m-d H:i:s')
         ]);
 
-        return redirect()->back()->with('message', 'Pago registrado exitosamente.');
+        return redirect()->back()->with('message', 'Movimiento registrado exitosamente.');
     }
 }

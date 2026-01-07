@@ -2,10 +2,13 @@
 
 <?= $this->section('content') ?>
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Administración de Usuarios</h1>
+    <h1 class="h2">Usuarios</h1>
     <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="<?= site_url('users/export-csv') ?>" class="btn btn-sm btn-outline-success me-2">
+            <i class="fas fa-file-csv"></i> Exportar CSV
+        </a>
         <a href="<?= site_url('users/create') ?>" class="btn btn-sm btn-outline-primary">
-            <i class="fas fa-user-plus"></i> Nuevo Usuario
+            <i class="fas fa-plus"></i> Nuevo Usuario
         </a>
     </div>
 </div>

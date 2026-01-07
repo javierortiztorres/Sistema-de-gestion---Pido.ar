@@ -69,4 +69,29 @@ class SupplierController extends BaseController
         $this->supplierModel->delete($id);
         return redirect()->to('suppliers')->with('message', 'Proveedor eliminado.');
     }
+
+    public function exportCsv()
+    {
+        $filename = 'proveedores_' . date('Ymd_His') . '.csv';
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+
+        $suppliers = $this->supplierModel->findAll();
+        $output = fopen('php://output', 'w');
+
+        // Header
+        fputcsv($output, ['ID', 'Nombre', 'Email', 'Telefono', 'Saldo Cta Cte']);
+
+        foreach ($suppliers as $supplier) {
+            fputcsv($output, [
+                $supplier['id'],
+                $supplier['name'],
+                $supplier['email'],
+                $supplier['phone'],
+                $supplier['account_balance']
+            ]);
+        }
+        fclose($output);
+        exit;
+    }
 }

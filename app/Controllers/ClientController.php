@@ -84,6 +84,33 @@ class ClientController extends BaseController
     public function delete($id)
     {
         $this->clientModel->delete($id);
-        return redirect()->to('/clients')->with('message', 'Client deleted successfully');
+        return redirect()->to('clients')->with('message', 'Cliente eliminado.');
+    }
+
+    public function exportCsv()
+    {
+        $filename = 'clientes_' . date('Ymd_His') . '.csv';
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+
+        $clients = $this->clientModel->findAll();
+        $output = fopen('php://output', 'w');
+
+        // Header
+        fputcsv($output, ['ID', 'Nombre', 'Tipo', 'Email', 'Telefono', 'Direccion', 'Saldo Cta Cte']);
+
+        foreach ($clients as $client) {
+            fputcsv($output, [
+                $client['id'],
+                $client['name'],
+                $client['type'],
+                $client['email'],
+                $client['phone'],
+                $client['address'],
+                $client['account_balance']
+            ]);
+        }
+        fclose($output);
+        exit;
     }
 }

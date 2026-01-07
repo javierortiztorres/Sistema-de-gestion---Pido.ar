@@ -15,6 +15,7 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
     $routes->get('/', 'Home::index');
 
     // Clients
+    $routes->get('clients/export-csv', 'ClientController::exportCsv');
     $routes->get('clients', 'ClientController::index');
     $routes->get('clients/create', 'ClientController::create');
     $routes->post('clients/store', 'ClientController::store');
@@ -23,6 +24,7 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
     $routes->get('clients/delete/(:num)', 'ClientController::delete/$1');
 
     // Categories
+    $routes->get('categories/export-csv', 'CategoryController::exportCsv');
     $routes->get('categories', 'CategoryController::index');
     $routes->get('categories/create', 'CategoryController::create');
     $routes->post('categories/store', 'CategoryController::store');
@@ -31,6 +33,7 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
     $routes->get('categories/delete/(:num)', 'CategoryController::delete/$1');
 
     // Products
+    $routes->get('products/export-csv', 'ProductController::exportCsv');
     $routes->get('products', 'ProductController::index');
     $routes->get('products/create', 'ProductController::create');
     $routes->post('products/store', 'ProductController::store');
@@ -40,9 +43,11 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
     $routes->get('products/delete/(:num)', 'ProductController::delete/$1');
     
     // Stock Logs
+    $routes->get('stock-logs/export-csv', 'StockLogController::exportCsv');
     $routes->get('stock-logs', 'StockLogController::index');
 
     // Sales
+    $routes->get('sales/export-csv', 'SaleController::exportCsv');
     $routes->get('sales/new', 'SaleController::new');
     $routes->post('sales/store', 'SaleController::store');
     $routes->get('sales', 'SaleController::index');
@@ -57,6 +62,7 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
 
     // Users
     $routes->group('users', function($routes) {
+        $routes->get('export-csv', 'UserController::exportCsv');
         $routes->get('/', 'UserController::index');
         $routes->get('create', 'UserController::create');
         $routes->post('store', 'UserController::store');
@@ -71,6 +77,7 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
 
     // Suppliers
     $routes->group('suppliers', function($routes) {
+        $routes->get('export-csv', 'SupplierController::exportCsv');
         $routes->get('/', 'SupplierController::index');
         $routes->get('create', 'SupplierController::create');
         $routes->post('store', 'SupplierController::store');

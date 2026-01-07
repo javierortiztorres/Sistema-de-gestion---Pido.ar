@@ -53,10 +53,11 @@
                 <form id="sale-form">
                     <div class="mb-3">
                         <label for="client_id" class="form-label">Cliente</label>
-                        <select class="form-select" id="client_id" required>
-                            <option value="">Consumidor Final (Sin registrar)</option>
+                        <select class="form-select" id="client_id">
                             <?php foreach ($clients as $client): ?>
-                                <option value="<?= $client['id'] ?>"><?= esc($client['name']) ?></option>
+                                <option value="<?= $client['id'] ?>" <?= $client['name'] === 'Consumidor Final' ? 'selected' : '' ?>>
+                                    <?= esc($client['name']) ?>
+                                </option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -76,6 +77,7 @@
                              <option value="credit_card">Tarjeta Crédito</option>
                              <option value="debit_card">Tarjeta Débito</option>
                              <option value="transfer">Transferencia</option>
+                             <option value="current_account">Cuenta Corriente (Fiado)</option>
                          </select>
                     </div>
 

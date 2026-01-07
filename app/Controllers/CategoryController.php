@@ -86,6 +86,29 @@ class CategoryController extends BaseController
     public function delete($id)
     {
         $this->categoryModel->delete($id);
-        return redirect()->to('/categories')->with('message', 'Category deleted successfully');
+        return redirect()->to('categories')->with('message', 'Categoría eliminada.');
+    }
+
+    public function exportCsv()
+    {
+        $filename = 'categorias_' . date('Ymd_His') . '.csv';
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+
+        $categories = $this->categoryModel->findAll();
+        $output = fopen('php://output', 'w');
+
+        // Header
+        fputcsv($output, ['ID', 'Nombre', 'Descripcion']);
+
+        foreach ($categories as $category) {
+            fputcsv($output, [
+                $category['id'],
+                $category['name'],
+                $category['description']
+            ]);
+        }
+        fclose($output);
+        exit;
     }
 }

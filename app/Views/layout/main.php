@@ -29,10 +29,16 @@
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <ul class="navbar-nav me-auto mb-2 mb-md-0">
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= site_url('/') ?>">Home</a>
+                        <a class="nav-link" href="<?= site_url('/') ?>">
+                            <i class="fas fa-home"></i>
+                            Home
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= site_url('sales/new') ?>">POS (Venta)</a>
+                        <a class="nav-link" href="<?= site_url('sales/new') ?>">
+                            <i class="fas fa-cash-register"></i>
+                            POS (Venta)
+                        </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="<?= site_url('sales') ?>">
@@ -41,7 +47,10 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= site_url('clients') ?>">Clientes</a>
+                        <a class="nav-link" href="<?= site_url('clients') ?>">
+                            <i class="fas fa-users"></i>
+                            Clientes
+                        </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="<?= site_url('suppliers') ?>">

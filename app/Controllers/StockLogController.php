@@ -26,4 +26,37 @@ class StockLogController extends BaseController
 
         return view('stock_logs/index', $data);
     }
+
+    public function exportCsv()
+    {
+        $filename = 'movimientos_stock_' . date('Ymd_His') . '.csv';
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+
+        $logModel = new StockLogModel();
+        $logs = $logModel
+            ->select('stock_logs.*, products.name as product_name, users.name as user_name')
+            ->join('products', 'products.id = stock_logs.product_id', 'left')
+            ->join('users', 'users.id = stock_logs.user_id', 'left')
+            ->orderBy('created_at', 'DESC')
+            ->findAll();
+
+        $output = fopen('php://output', 'w');
+
+        // Header
+        fputcsv($output, ['ID', 'Fecha', 'Producto', 'Usuario', 'Cambio', 'Razon']);
+
+        foreach ($logs as $log) {
+            fputcsv($output, [
+                $log['id'],
+                $log['created_at'],
+                $log['product_name'],
+                $log['user_name'],
+                $log['change_amount'],
+                $log['reason']
+            ]);
+        }
+        fclose($output);
+        exit;
+    }
 }

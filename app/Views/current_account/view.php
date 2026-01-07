@@ -17,8 +17,8 @@
                 <p class="card-text text-center text-muted">
                     <?= $type == 'client' ? 'Deuda del Cliente' : 'Deuda con el Proveedor' ?>
                 </p>
-                <button type="button" class="btn btn-success w-100" data-bs-toggle="modal" data-bs-target="#paymentModal">
-                    Registrar Pago
+                <button type="button" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#paymentModal">
+                    Registrar Movimiento
                 </button>
             </div>
         </div>
@@ -73,10 +73,17 @@
         
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Registrar Pago</h5>
+            <h5 class="modal-title">Registrar Movimiento</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
+            <div class="mb-3">
+                <label for="mov_type" class="form-label">Tipo de Movimiento</label>
+                <select class="form-select" name="mov_type" id="mov_type">
+                    <option value="payment">Pago (Reduce Deuda / Haber)</option>
+                    <option value="debt">Cargo / Nota de Débito (Aumenta Deuda / Debe)</option>
+                </select>
+            </div>
             <div class="mb-3">
                 <label for="amount" class="form-label">Monto</label>
                 <div class="input-group">
