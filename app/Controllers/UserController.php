@@ -16,7 +16,10 @@ class UserController extends BaseController
 
     public function index()
     {
-        $data['users'] = $this->userModel->findAll();
+        $data['users'] = $this->userModel
+            ->select('users.*, roles.name as role_name')
+            ->join('roles', 'roles.id = users.role_id', 'left')
+            ->findAll();
         return view('users/index', $data);
     }
 
@@ -71,9 +74,9 @@ class UserController extends BaseController
         }
 
         $rules = [
-            'name'  => 'required|min_length[3]',
-            'email' => "required|valid_email|is_unique[users.email,id,{$id}]",
-            'role'  => 'required|in_list[admin,employee]',
+            'name'    => 'required|min_length[3]|max_length[100]',
+            'email'   => "required|valid_email|is_unique[users.email,id,{$id}]",
+            'role_id' => 'required|integer|is_not_unique[roles.id]',
         ];
 
         // Validar password solo si se envia
@@ -87,9 +90,9 @@ class UserController extends BaseController
         }
 
         $data = [
-            'name'  => $this->request->getPost('name'),
-            'email' => $this->request->getPost('email'),
-            'role'  => $this->request->getPost('role'),
+            'name'    => $this->request->getPost('name'),
+            'email'   => $this->request->getPost('email'),
+            'role_id' => $this->request->getPost('role_id'),
         ];
 
         if (!empty($password)) {

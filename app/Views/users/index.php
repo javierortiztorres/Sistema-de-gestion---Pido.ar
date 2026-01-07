@@ -35,11 +35,7 @@
                     <td><?= esc($user['name']) ?></td>
                     <td><?= esc($user['email']) ?></td>
                     <td>
-                        <?php if ($user['role'] === 'admin'): ?>
-                            <span class="badge bg-danger">Admin</span>
-                        <?php else: ?>
-                            <span class="badge bg-info text-dark">Empleado</span>
-                        <?php endif; ?>
+                        <span class="badge bg-secondary"><?= esc($user['role_name'] ?? 'Sin Rol') ?></span>
                     </td>
                     <td><?= $user['updated_at'] ? date('d/m/Y H:i', strtotime($user['updated_at'])) : '-' ?></td>
                     <td>
