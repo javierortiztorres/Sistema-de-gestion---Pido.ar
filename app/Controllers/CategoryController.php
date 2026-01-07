@@ -111,4 +111,38 @@ class CategoryController extends BaseController
         fclose($output);
         exit;
     }
+
+    public function importCsv()
+    {
+        return view('categories/import');
+    }
+
+    public function processImport()
+    {
+        $file = $this->request->getFile('csv_file');
+
+        if (!$file->isValid() || $file->getExtension() !== 'csv') {
+            return redirect()->back()->with('error', 'Por favor suba un archivo CSV válido.');
+        }
+
+        if (($handle = fopen($file->getTempName(), "r")) !== FALSE) {
+            fgetcsv($handle); // Skip header
+            
+            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+                // Expected: Name, Description
+                if (count($data) >= 1) { 
+                     $existing = $this->categoryModel->where('name', $data[0])->first();
+                     if (!$existing) {
+                        $this->categoryModel->insert([
+                            'name'        => $data[0],
+                            'description' => $data[1] ?? '',
+                        ]);
+                     }
+                }
+            }
+            fclose($handle);
+        }
+
+        return redirect()->to('categories')->with('message', 'Importación completada.');
+    }
 }

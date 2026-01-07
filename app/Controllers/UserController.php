@@ -22,27 +22,29 @@ class UserController extends BaseController
 
     public function create()
     {
-        return view('users/create');
+        $roleModel = new \App\Models\RoleModel();
+        $data['roles'] = $roleModel->findAll();
+        return view('users/create', $data);
     }
 
     public function store()
     {
         $rules = [
-            'name'     => 'required|min_length[3]',
+            'name'     => 'required|min_length[3]|max_length[100]',
             'email'    => 'required|valid_email|is_unique[users.email]',
-            'role'     => 'required|in_list[admin,employee]',
             'password' => 'required|min_length[6]',
+            'role_id'  => 'required|integer|is_not_unique[roles.id]',
         ];
 
-        if (!$this->validate($rules)) {
+        if (! $this->validate($rules)) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
-        $this->userModel->insert([
+        $this->userModel->save([
             'name'          => $this->request->getPost('name'),
             'email'         => $this->request->getPost('email'),
-            'role'          => $this->request->getPost('role'),
             'password_hash' => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT),
+            'role_id'       => $this->request->getPost('role_id'),
         ]);
 
         return redirect()->to('users')->with('message', 'Usuario creado exitosamente.');
@@ -51,8 +53,12 @@ class UserController extends BaseController
     public function edit($id)
     {
         $data['user'] = $this->userModel->find($id);
-        if (!$data['user']) {
-            return redirect()->to('users')->with('error', 'Usuario no encontrado.');
+        
+        $roleModel = new \App\Models\RoleModel();
+        $data['roles'] = $roleModel->findAll();
+
+        if (empty($data['user'])) {
+            return redirect()->to('users')->with('error', 'Usuario no encontrado');
         }
         return view('users/edit', $data);
     }
@@ -115,18 +121,76 @@ class UserController extends BaseController
         $output = fopen('php://output', 'w');
 
         // Header
-        fputcsv($output, ['ID', 'Nombre', 'Email', 'Rol', 'Fecha Creacion']);
+        fputcsv($output, ['ID', 'Nombre', 'Email', 'Role ID', 'Fecha Creacion']);
 
         foreach ($users as $user) {
             fputcsv($output, [
                 $user['id'],
                 $user['name'],
                 $user['email'],
-                $user['role'],
+                $user['role_id'],
                 $user['created_at']
             ]);
         }
         fclose($output);
         exit;
+    }
+
+    public function importCsv()
+    {
+        return view('users/import');
+    }
+
+    public function processImport()
+    {
+        $file = $this->request->getFile('csv_file');
+
+        if (!$file->isValid() || $file->getExtension() !== 'csv') {
+            return redirect()->back()->with('error', 'Por favor suba un archivo CSV válido.');
+        }
+
+        if (($handle = fopen($file->getTempName(), "r")) !== FALSE) {
+            fgetcsv($handle); // Skip header
+            $roleModel = new \App\Models\RoleModel();
+
+            // Cache roles for performance
+            $allRoles = $roleModel->findAll();
+            $rolesMap = []; // Name -> ID
+            foreach($allRoles as $r) {
+                $rolesMap[strtolower($r['name'])] = $r['id'];
+            }
+            
+            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+                // Expected: Name, Email, Password, Role Name
+                if (count($data) >= 4) { 
+                     $exists = $this->userModel->where('email', $data[1])->first();
+                     if (!$exists) {
+                        $roleName = strtolower(trim($data[3]));
+                        $roleId = $rolesMap[$roleName] ?? null;
+
+                        // Default to employee if role not found, or skip? Let's use ID 2 (Employee) as fallback or create if vital
+                        // For safety, if role invalid, skip or default. Let's try to map 'admin' and 'employee'
+                        if (!$roleId) {
+                            // Try searching by exact ID if number
+                             if (is_numeric($roleName)) {
+                                 $roleId = $roleName;
+                             } else {
+                                $roleId = 2; // Fallback to assumed 'employee' ID
+                             }
+                        }
+
+                        $this->userModel->insert([
+                            'name'          => $data[0],
+                            'email'         => $data[1],
+                            'password_hash' => password_hash($data[2], PASSWORD_DEFAULT),
+                            'role_id'       => $roleId,
+                        ]);
+                     }
+                }
+            }
+            fclose($handle);
+        }
+
+        return redirect()->to('users')->with('message', 'Importación completada.');
     }
 }

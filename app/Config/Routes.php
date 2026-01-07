@@ -16,6 +16,8 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
 
     // Clients
     $routes->get('clients/export-csv', 'ClientController::exportCsv');
+    $routes->get('clients/import-csv', 'ClientController::importCsv');
+    $routes->post('clients/process-import', 'ClientController::processImport');
     $routes->get('clients', 'ClientController::index');
     $routes->get('clients/create', 'ClientController::create');
     $routes->post('clients/store', 'ClientController::store');
@@ -25,6 +27,8 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
 
     // Categories
     $routes->get('categories/export-csv', 'CategoryController::exportCsv');
+    $routes->get('categories/import-csv', 'CategoryController::importCsv');
+    $routes->post('categories/process-import', 'CategoryController::processImport');
     $routes->get('categories', 'CategoryController::index');
     $routes->get('categories/create', 'CategoryController::create');
     $routes->post('categories/store', 'CategoryController::store');
@@ -34,6 +38,8 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
 
     // Products
     $routes->get('products/export-csv', 'ProductController::exportCsv');
+    $routes->get('products/import-csv', 'ProductController::importCsv');
+    $routes->post('products/process-import', 'ProductController::processImport');
     $routes->get('products', 'ProductController::index');
     $routes->get('products/create', 'ProductController::create');
     $routes->post('products/store', 'ProductController::store');
@@ -63,6 +69,8 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
     // Users
     $routes->group('users', function($routes) {
         $routes->get('export-csv', 'UserController::exportCsv');
+        $routes->get('import-csv', 'UserController::importCsv');
+        $routes->post('process-import', 'UserController::processImport');
         $routes->get('/', 'UserController::index');
         $routes->get('create', 'UserController::create');
         $routes->post('store', 'UserController::store');
@@ -78,6 +86,8 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
     // Suppliers
     $routes->group('suppliers', function($routes) {
         $routes->get('export-csv', 'SupplierController::exportCsv');
+        $routes->get('import-csv', 'SupplierController::importCsv');
+        $routes->post('process-import', 'SupplierController::processImport');
         $routes->get('/', 'SupplierController::index');
         $routes->get('create', 'SupplierController::create');
         $routes->post('store', 'SupplierController::store');
@@ -89,4 +99,17 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
     // Current Account
     $routes->get('current-account/(:segment)/(:num)', 'CurrentAccountController::view/$1/$2'); // Type/ID
     $routes->post('current-account/payment', 'CurrentAccountController::payment');
+
+    // Roles
+    $routes->group('roles', function($routes) {
+        $routes->get('/', 'RoleController::index');
+        $routes->get('create', 'RoleController::create');
+        $routes->post('store', 'RoleController::store');
+        $routes->get('edit/(:num)', 'RoleController::edit/$1');
+        $routes->post('update/(:num)', 'RoleController::update/$1');
+        $routes->get('delete/(:num)', 'RoleController::delete/$1');
+        $routes->get('export-csv', 'RoleController::exportCsv');
+        $routes->get('import-csv', 'RoleController::importCsv');
+        $routes->post('process-import', 'RoleController::processImport');
+    });
 });

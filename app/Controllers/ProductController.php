@@ -175,4 +175,57 @@ class ProductController extends BaseController
         fclose($output);
         exit;
     }
+
+    public function importCsv()
+    {
+        return view('products/import');
+    }
+
+    public function processImport()
+    {
+        $file = $this->request->getFile('csv_file');
+
+        if (!$file->isValid() || $file->getExtension() !== 'csv') {
+            return redirect()->back()->with('error', 'Por favor suba un archivo CSV válido.');
+        }
+
+        if (($handle = fopen($file->getTempName(), "r")) !== FALSE) {
+            fgetcsv($handle); // Skip header
+            
+            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+                // Expected: Code, Name, CategoryName, CostPrice, RetailPrice, WholesalePrice, Stock, MinStock
+                if (count($data) >= 7) { 
+                     // Check existing via code
+                     $existing = $this->productModel->where('code', $data[0])->first();
+                     if (!$existing) {
+                        // Find Category ID by Name
+                        $categoryId = null;
+                        if (!empty($data[2])) {
+                            $cat = $this->categoryModel->where('name', $data[2])->first();
+                            if ($cat) {
+                                $categoryId = $cat['id'];
+                            } else {
+                                // Optional: Create Category if not exists
+                                $categoryId = $this->categoryModel->insert(['name' => $data[2]]);
+                            }
+                        }
+
+                        $this->productModel->insert([
+                            'code'            => $data[0],
+                            'name'            => $data[1],
+                            'category_id'     => $categoryId,
+                            'cost_price'      => $data[3] ?? 0,
+                            'retail_price'    => $data[4] ?? 0,
+                            'wholesale_price' => $data[5] ?? 0,
+                            'stock_quantity'  => $data[6] ?? 0,
+                            'min_stock'       => $data[7] ?? 0,
+                        ]);
+                     }
+                }
+            }
+            fclose($handle);
+        }
+
+        return redirect()->to('products')->with('message', 'Importación completada.');
+    }
 }

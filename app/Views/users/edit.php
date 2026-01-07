@@ -22,12 +22,16 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="role" class="form-label">Rol</label>
-                        <select class="form-select" id="role" name="role">
-                            <option value="employee" <?= old('role', $user['role']) == 'employee' ? 'selected' : '' ?>>Empleado</option>
-                            <option value="admin" <?= old('role', $user['role']) == 'admin' ? 'selected' : '' ?>>Administrador</option>
-                        </select>
-                    </div>
+                <label for="role_id" class="form-label">Rol</label>
+                <select class="form-select" id="role_id" name="role_id" required>
+                    <option value="" disabled>Seleccione un rol</option>
+                    <?php if(!empty($roles)): ?>
+                        <?php foreach($roles as $role): ?>
+                            <option value="<?= $role['id'] ?>" <?= (old('role_id', $user['role_id']) == $role['id']) ? 'selected' : '' ?>><?= esc($role['name']) ?></option>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </select>
+            </div>
 
                     <div class="mb-3">
                         <label for="password" class="form-label">Nueva Contraseña (Dejar en blanco para mantener)</label>

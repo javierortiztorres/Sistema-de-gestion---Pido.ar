@@ -94,4 +94,43 @@ class SupplierController extends BaseController
         fclose($output);
         exit;
     }
+
+    public function importCsv()
+    {
+        return view('suppliers/import');
+    }
+
+    public function processImport()
+    {
+        $file = $this->request->getFile('csv_file');
+
+        if (!$file->isValid() || $file->getExtension() !== 'csv') {
+            return redirect()->back()->with('error', 'Por favor suba un archivo CSV válido.');
+        }
+
+        if (($handle = fopen($file->getTempName(), "r")) !== FALSE) {
+            fgetcsv($handle); // Skip header
+            
+            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+                // Expected: Name, Email, Phone
+                if (count($data) >= 1) { 
+                     $exists = false;
+                     if (!empty($data[1])) {
+                        $exists = $this->supplierModel->where('email', $data[1])->first();
+                     }
+
+                     if (!$exists) {
+                        $this->supplierModel->insert([
+                            'name'  => $data[0],
+                            'email' => $data[1] ?? null,
+                            'phone' => $data[2] ?? null,
+                        ]);
+                     }
+                }
+            }
+            fclose($handle);
+        }
+
+        return redirect()->to('suppliers')->with('message', 'Importación completada.');
+    }
 }

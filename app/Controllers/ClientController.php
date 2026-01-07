@@ -113,4 +113,46 @@ class ClientController extends BaseController
         fclose($output);
         exit;
     }
+
+    public function importCsv()
+    {
+        return view('clients/import');
+    }
+
+    public function processImport()
+    {
+        $file = $this->request->getFile('csv_file');
+
+        if (!$file->isValid() || $file->getExtension() !== 'csv') {
+            return redirect()->back()->with('error', 'Por favor suba un archivo CSV válido.');
+        }
+
+        if (($handle = fopen($file->getTempName(), "r")) !== FALSE) {
+            fgetcsv($handle); // Skip header
+            
+            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+                // Expected: Name, Type, Email, Phone, Address
+                if (count($data) >= 2) { 
+                     // Basic check to avoid duplicates by email if provided
+                     $exists = false;
+                     if (!empty($data[2])) {
+                        $exists = $this->clientModel->where('email', $data[2])->first();
+                     }
+
+                     if (!$exists) {
+                        $this->clientModel->insert([
+                            'name'    => $data[0],
+                            'type'    => $data[1] ?? 'Consumidor Final',
+                            'email'   => $data[2] ?? null,
+                            'phone'   => $data[3] ?? null,
+                            'address' => $data[4] ?? null,
+                        ]);
+                     }
+                }
+            }
+            fclose($handle);
+        }
+
+        return redirect()->to('clients')->with('message', 'Importación completada.');
+    }
 }
