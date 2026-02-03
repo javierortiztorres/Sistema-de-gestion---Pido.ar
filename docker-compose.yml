@@ -39,6 +39,7 @@ services:
       - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
+      - ./database_dump.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - ci4_network
 

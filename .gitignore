@@ -124,3 +124,8 @@ _modules/*
 
 /results/
 /phpunit*.xml
+zip_project.ps1
+sistema_gestion_clean.zip
+Sistema de gestion con boostrap.zip
+database_dump.sql
+ci4_db.sql
